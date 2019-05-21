@@ -1,0 +1,25 @@
+name: bytes_buffer
+description: A read/write buffer package based on Bytes package.
+version: 0.7.7
+# homepage: https://www.example.com
+author: Jim Philbin <jfphilbin@gmail.com>
+
+environment:
+  sdk: '>=2.0.0 <3.0.0'
+
+dependencies:
+  bytes:
+    path: C:/odw/sdk/bytes
+    version: ^0.7.0
+
+dev_dependencies:
+  benchmark_harness: any
+  coverage: any
+  grinder: ^0.8.0
+  test:  any
+  test_tools:
+    path: ../../test_tools
+    version: ^0.7.5
+  rng:
+    path: C:/odw/sdk/rng
+    version: ^0.8.0

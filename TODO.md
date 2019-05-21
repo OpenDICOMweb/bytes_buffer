@@ -7,13 +7,13 @@
 
 ## Current
 
-1. unify maybe grow, ensureCapacity, and ensureRemaining
 1. look at making rIndex/wIndex private
 1. verify initialization of rIndex/wIndex
 1. Complete write test
 3. Remove all commented code
 1. Remove all ignore_for_file
 4. Document all public methods,...
+1. Add WriteBuffer test to all tests
 5. Test and record performance
 1. Finish README.md
 

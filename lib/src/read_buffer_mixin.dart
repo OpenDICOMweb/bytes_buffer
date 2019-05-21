@@ -147,21 +147,6 @@ mixin ReadBufferMixin {
     return s;
   }
 
-/*
-  String getAscii(int length) =>
-      bytes.getAscii(offset: _rIndex, length: length);
-
-  String readAscii(int length) {
-    final s = getAscii(length);
-    _rIndex += length;
-    return s;
-  }
-
-
-
-  String readString(int length) => readUtf8(length);
-*/
-
   bool getUint32AndCompare(int target) {
     final delimiter = bytes.getUint32(rIndex);
     final v = target == delimiter;
@@ -171,7 +156,6 @@ mixin ReadBufferMixin {
   ByteData bdView([int start = 0, int end]) {
     end ??= rIndex;
     final length = end - start;
-    //   final offset = _getOffset(start, length);
     return bytes.asByteData(start, length);
   }
 
@@ -242,31 +226,13 @@ mixin ReadBufferMixin {
     return v;
   }
 
-/*
-  List<String> readAsciiList(int length) {
-    final v =
-        bytes.getAsciiList(offset: _rIndex, length: length, allowInvalid: true);
-    _rIndex += length;
-    return v;
-  }
 
-  List<String> readUtf8List(int length) {
-    final v =
-        bytes.getUtf8List(offset: _rIndex, length: length, allowInvalid: true);
-    _rIndex += length;
-    return v;
-  }
-*/
   List<String> readStringList(int length) {
     final v =
         bytes.getStringList(offset: rIndex, length: length, allowInvalid: true);
     rIndex += length;
     return v;
   }
-
-/*
-  List<String> readStringList(int length) => readUtf8List(length);
-*/
 
   int _getOffset(int start, int length) {
     final offset = bytes.offset + start;

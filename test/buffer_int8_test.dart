@@ -12,26 +12,45 @@ import 'package:rng/rng.dart';
 import 'package:test/test.dart';
 
 void main() {
-
   final rng = RNG();
-  group('Bytes Float Tests', () {
+  group('Bytes Int8 Tests', () {
     test('ReadBuffer', () {
       for (var i = 1; i < 10; i++) {
-        final vList1 = rng.int8List(1, i);
-        final bytes1 = Bytes.fromList(vList1);
-        final buf = ReadBuffer(bytes1);
-       // print('ReadBuffer1: $buf');
+        final vList = rng.int8List(1, i);
+        final bytes = Bytes.fromList(vList);
+        final buf = ReadBuffer(bytes);
 
-        expect(buf.bytes.buf.buffer == bytes1.buf.buffer, true);
-        expect(buf.bytes == bytes1, true);
-        expect(buf.length == bytes1.length, true);
-        expect(
-            buf.bytes.buf.buffer.lengthInBytes ==
-                bytes1.buf.buffer.lengthInBytes,
-            true);
+        expect(buf.bytes.buf.buffer == bytes.buf.buffer, true);
+        expect(buf.bytes == bytes, true);
+        expect(buf.length == bytes.length, true);
+        expect(buf.getInt8() == bytes.getInt8(0), true);
+
         expect(buf.rIndex == 0, true);
-        expect(buf.wIndex == bytes1.length, true);
+        expect(buf.wIndex == bytes.length, true);
       }
+    });
+
+    test('Buffer Growing Test', () {
+      const startSize = 1;
+      const iterations = 1024 * 1;
+      final wb = WriteBuffer(startSize);
+      print('''
+iterations: $iterations
+  index: ${wb.writeIndex}
+  length: ${wb.length}
+''');
+
+      expect(wb.readIndex == 0, true);
+      expect(wb.writeIndex == 0, true);
+      expect(wb.length == startSize, true);
+      for (var i = 0; i <= iterations - 1; i++) {
+        final v = i % 127;
+        wb.writeInt8(v);
+        final x = wb.bytes.getInt8(i);
+        expect(v == x, true);
+      }
+   //   print('wb: $wb}\n  length: ${wb.writeIndex}');
+      expect(wb.writeIndex == iterations, true);
     });
   });
 }

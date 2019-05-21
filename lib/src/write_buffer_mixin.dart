@@ -154,23 +154,14 @@ mixin WriteBufferMixin {
   }
 
   // **** String writing methods
-/*
-  void writeAscii(String s, [int offset = 0, int length]) =>
-      writeUint8List(ascii.encode(s), offset, length);
 
-  void writeUtf8(String s, [int offset = 0, int length]) =>
-      _writeString(s, offset, length);
-*/
-
-  void _writeString(String s, [int offset = 0, int length]) {
-    final _s = (offset == 0 && length == null)
+  /// Writes a UTF-8 encoding of [s] into _this_ at current [writeIndex].
+  void writeString(String s, [int offset = 0, int length]) {
+    final x = (offset == 0 && length == null)
         ? s
         : s.substring(offset, offset + length);
-    return writeUint8List(cvt.utf8.encode(_s));
+    return writeUint8List(cvt.utf8.encode(x));
   }
-
-  void writeString(String s, [int offset = 0, int length]) =>
-      _writeString(s, offset, length);
 
   /// Writes [length] zeros to _this_.
   bool writeZeros(int length) {
@@ -284,7 +275,6 @@ mixin WriteBufferMixin {
   bool _isClosed = false;
 
   void get reset {
-    //  rIndex = 0;
     wIndex = 0;
     _isClosed = false;
   }

@@ -7,6 +7,7 @@
 
 ## Current
 
+1. unify maybe grow, ensureCapacity, and ensureRemaining
 1. look at making rIndex/wIndex private
 1. verify initialization of rIndex/wIndex
 1. Complete write test

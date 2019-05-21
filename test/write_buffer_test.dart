@@ -18,7 +18,6 @@ void main() {
 iterations: $iterations
   index: ${wb.writeIndex}
   length: ${wb.length}
-  maxLength: ${wb.limit}
 ''');
 
       expect(wb.readIndex == 0, true);

@@ -18,9 +18,11 @@ abstract class ReadBufferBase extends BytesBuffer {
   Bytes get bytes;
 
   /// The current read index.
+  @override
   int get rIndex;
 
   /// The current write index.
+  @override
   int get wIndex;
 
   // **** ReadBuffer specific Getters and Methods
@@ -81,7 +83,6 @@ class ReadBuffer extends ReadBufferBase with ReadBufferMixin {
   /// portion of _this_.
   ReadBuffer get asLittleEndian =>
       ReadBuffer.from(this, rIndex, wIndex, Endian.little);
-
 }
 
 /// A mixin used for logging [ReadBuffer] methods.

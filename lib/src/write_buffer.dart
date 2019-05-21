@@ -15,27 +15,26 @@ import 'package:bytes_buffer/src/write_buffer_mixin.dart';
 class WriteBuffer with WriteBufferMixin {
   @override
   GrowableBytes bytes;
+  @override
   final int rIndex;
   int _wIndex;
 
   /// Creates an empty WriteBuffer.
   WriteBuffer(
       [int length = kDefaultLength,
-      Endian endian = Endian.little,
-      int limit = kDefaultLimit])
-      : rIndex = 1,
+      Endian endian = Endian.little])
+      : rIndex = 0,
         _wIndex = 0,
-        bytes = GrowableBytes(length, endian, limit);
+        bytes = GrowableBytes(length, endian);
 
   /// Creates a [WriteBuffer] from another [WriteBuffer].
   WriteBuffer.from(WriteBuffer wb,
       [int offset = 0,
       int length,
-      Endian endian = Endian.little,
-      int limit = kDefaultLimit])
+      Endian endian = Endian.little])
       : rIndex = offset,
         _wIndex = offset,
-        bytes = GrowableBytes.from(wb.bytes, offset, length, endian, limit);
+        bytes = GrowableBytes.from(wb.bytes, offset, length, endian);
 
   /// Creates a WriteBuffer from a [GrowableBytes].
   WriteBuffer.fromBytes(this.bytes, this.rIndex, this._wIndex);
@@ -44,15 +43,16 @@ class WriteBuffer with WriteBufferMixin {
   WriteBuffer.typedDataView(TypedData td,
       [int offset = -1,
       int lengthInBytes,
-      Endian endian = Endian.little,
-      int limit = kDefaultLimit])
+      Endian endian = Endian.little])
       : rIndex = offset,
         _wIndex = lengthInBytes ?? td.lengthInBytes,
         bytes = GrowableBytes.typedDataView(td, offset ?? 0,
-            lengthInBytes ?? td.lengthInBytes, endian ?? Endian.little, limit);
+            lengthInBytes ?? td.lengthInBytes, endian ?? Endian.little);
 
   /// Returns the current write index.
+  @override
   int get wIndex => _wIndex;
+  @override
   set wIndex(int n) {
     if (wIndex < rIndex || wIndex >= bytes.length)
       throw RangeError.range(wIndex, rIndex, bytes.length);

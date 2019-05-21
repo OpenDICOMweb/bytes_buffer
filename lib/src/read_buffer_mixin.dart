@@ -138,7 +138,8 @@ mixin ReadBufferMixin {
     return v;
   }
 
-  String getString(int length) => bytes.getString(offset: rIndex, length: length);
+  String getString(int length) =>
+      bytes.getString(offset: rIndex, length: length);
 
   String readString(int length) {
     final s = getString(length);
@@ -258,7 +259,7 @@ mixin ReadBufferMixin {
 */
   List<String> readStringList(int length) {
     final v =
-    bytes.getStringList(offset: rIndex, length: length, allowInvalid: true);
+        bytes.getStringList(offset: rIndex, length: length, allowInvalid: true);
     rIndex += length;
     return v;
   }
@@ -277,11 +278,9 @@ mixin ReadBufferMixin {
   Uint8List get contentsRead =>
       bytes.buf.buffer.asUint8List(bytes.offset, rIndex);
 
-  Uint8List get contentsUnread =>
-      bytes.buf.buffer.asUint8List(rIndex, wIndex);
+  Uint8List get contentsUnread => bytes.buf.buffer.asUint8List(rIndex, wIndex);
 
-  Uint8List get contentsWritten =>
-      bytes.buf.buffer.asUint8List(rIndex, wIndex);
+  Uint8List get contentsWritten => bytes.buf.buffer.asUint8List(rIndex, wIndex);
 
   @override
   String toString() => '$runtimeType: @R$rIndex @W$wIndex $bytes';

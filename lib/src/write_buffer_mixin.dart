@@ -31,8 +31,6 @@ mixin WriteBufferMixin {
   set wIndex(int i);
   ByteBuffer get buffer => bytes.buf.buffer;
 
-  int get limit => bytes.limit;
-
   ByteData asByteData([int offset, int length]) =>
       bytes.buf.buffer.asByteData(offset, length ?? bytes.length);
 
@@ -42,7 +40,7 @@ mixin WriteBufferMixin {
 
   int get writeRemaining => bytes.length - wIndex;
   int get remaining => writeRemaining;
-  int get writeRemainingMax => limit - wIndex;
+  int get writeRemainingMax => bytes.length - wIndex;
   bool get isWritable => remaining > 0;
   bool get isEmpty => remaining <= 0;
   bool get isNotEmpty => !isEmpty;
@@ -76,7 +74,7 @@ mixin WriteBufferMixin {
 
   void writeInt8(int n) {
     assert(n >= -128 && n <= 127, 'Value out of range: $n');
-    _maybeGrow(1024);
+    _maybeGrow(1);
     bytes.setInt8(wIndex, n);
     wIndex++;
   }
@@ -255,27 +253,19 @@ mixin WriteBufferMixin {
   /// Ensures that [bytes] has at least [remaining] writable _bytes.
   /// The [bytes] is grows if necessary, and copies existing _bytes into
   /// the new [bytes].
-  bool ensureRemaining(int remaining) => _ensureRemaining(remaining);
-  bool _ensureRemaining(int remaining) => _ensureCapacity(wIndex + remaining);
+  bool ensureRemaining(int remaining) => _maybeGrow(remaining);
 
-  /// Ensures that [bytes] is at least [capacity] long, and grows
-  /// the buffer if necessary, preserving existing data.
-  bool ensureCapacity(int capacity) => _ensureCapacity(capacity);
-
-  bool _ensureCapacity(int capacity) {
-    if (capacity > bytes.length) return bytes.grow(capacity);
-    return false;
-  }
-
-  /// Grow the buffer if the wIndex is at, or beyond,
+  /// Check that the buffer has enough room to write an object of [size],
   /// the end of the current buf.
+  bool maybeGrow(int size) => _maybeGrow(size);
+
   bool _maybeGrow(int size) {
     if (wIndex + size < bytes.length) return false;
-    return bytes.grow(wIndex + size);
+    return bytes.ensureLength(wIndex + size);
   }
 
   @override
-  String toString() => '$runtimeType($length)[$wIndex] maxLength: $limit';
+  String toString() => '$runtimeType($length)[$wIndex]';
 
   void warn(Object msg) => print('** Warning(@$wIndex): $msg');
 

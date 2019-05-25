@@ -14,39 +14,31 @@ import 'package:bytes_buffer/src/write_buffer_mixin.dart';
 /// A writable [ByteBuffer].
 class WriteBuffer with WriteBufferMixin {
   @override
-  GrowableBytes bytes;
+  Bytes bytes;
   @override
   final int rIndex;
   int _wIndex;
 
   /// Creates an empty WriteBuffer.
-  WriteBuffer(
-      [int length = kDefaultLength,
-      Endian endian = Endian.little])
+  WriteBuffer([int length = kDefaultLength, Endian endian = Endian.little])
       : rIndex = 0,
         _wIndex = 0,
-        bytes = GrowableBytes(length, endian);
+        bytes = Bytes.empty(length, endian);
 
   /// Creates a [WriteBuffer] from another [WriteBuffer].
   WriteBuffer.from(WriteBuffer wb,
-      [int offset = 0,
-      int length,
-      Endian endian = Endian.little])
-      : rIndex = offset,
-        _wIndex = offset,
-        bytes = GrowableBytes.from(wb.bytes, offset, length, endian);
+      [this.rIndex = 0, int length, Endian endian = Endian.little])
+      : _wIndex = rIndex,
+        bytes = Bytes.from(wb.bytes, rIndex, length, endian);
 
-  /// Creates a WriteBuffer from a [GrowableBytes].
+  /// Creates a WriteBuffer from a [Bytes].
   WriteBuffer.fromBytes(this.bytes, this.rIndex, this._wIndex);
 
   /// Creates a [WriteBuffer] that uses a [TypedData] view of [td].
   WriteBuffer.typedDataView(TypedData td,
-      [int offset = -1,
-      int lengthInBytes,
-      Endian endian = Endian.little])
-      : rIndex = offset,
-        _wIndex = lengthInBytes ?? td.lengthInBytes,
-        bytes = GrowableBytes.typedDataView(td, offset ?? 0,
+      [this.rIndex = 0, int lengthInBytes, Endian endian = Endian.little])
+      : _wIndex = lengthInBytes ?? td.lengthInBytes,
+        bytes = Bytes.typedDataView(td, rIndex,
             lengthInBytes ?? td.lengthInBytes, endian ?? Endian.little);
 
   /// Returns the current write index.

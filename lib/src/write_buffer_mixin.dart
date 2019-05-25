@@ -16,7 +16,7 @@ import 'package:bytes/bytes.dart';
 mixin WriteBufferMixin {
   // **** Interface
   /// The underlying [Bytes] for the buffer.
-  GrowableBytes get bytes;
+  Bytes get bytes;
 
   // **** End of Interface
 

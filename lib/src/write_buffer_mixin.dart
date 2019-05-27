@@ -233,14 +233,6 @@ mixin WriteBufferMixin {
     wIndex += list.length * 8;
   }
 
-  void writeAsciiList(List<String> list) =>
-      wIndex += bytes.setAsciiList(wIndex, list);
-
-  void writeUtf8List(List<String> list) =>
-      wIndex += bytes.setUtf8List(wIndex, list);
-
-  void writeStringList(List<String> list) => writeUtf8List(list);
-
   /// Ensures that [bytes] has at least [remaining] writable _bytes.
   /// The [bytes] is grows if necessary, and copies existing _bytes into
   /// the new [bytes].

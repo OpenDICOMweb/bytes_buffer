@@ -15,9 +15,14 @@ abstract class BytesBuffer {
   /// The underlying [Bytes] for the buffer.
   Bytes get bytes;
   set bytes(Bytes bytes) => throw UnsupportedError('Unsupported Setter');
-  int get _rIndex;
-  set _rIndex(int n);
-  int get _wIndex;
+
+  /// The read index into _this_.
+  int get rIndex;
+  set rIndex(int n);
+
+  /// The read index into _this_.
+  int get wIndex;
+  set wIndex(int n);
 
   /// The offset of _this_ in the underlying [ByteBuffer].
   int get offset => bytes.offset;
@@ -32,19 +37,11 @@ abstract class BytesBuffer {
   int get end => start + bytes.length;
 
   /// The read index into the underlying bytes.
-  int get readIndex => _rIndex;
+  int get readIndex => rIndex;
 
-  /// Pseudonym for [readIndex].
-  int get rIndex => _rIndex;
-
-  /// Pseudonym for set [readIndex].
-  set rIndex(int n) => _rIndex = n;
 
   /// The write index into the underlying bytes.
-  int get writeIndex => _rIndex;
-
-  /// Pseudonym for [writeIndex].
-  int get wIndex => _wIndex;
+  int get writeIndex => rIndex;
 
   /// Returns _true_ if the _this_ is not readable.
   bool get isNotReadable => !isReadable;

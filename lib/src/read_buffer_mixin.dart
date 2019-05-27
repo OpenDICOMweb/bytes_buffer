@@ -228,8 +228,9 @@ mixin ReadBufferMixin {
 
 
   List<String> readStringList(int length) {
-    final v =
-        bytes.getStringList(offset: rIndex, length: length, allowInvalid: true);
+    final s =
+        bytes.getString(offset: rIndex, length: length, allowInvalid: true);
+    final v = s.split('\\');
     rIndex += length;
     return v;
   }

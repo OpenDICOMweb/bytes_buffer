@@ -7,6 +7,7 @@
 //  See the AUTHORS file for other contributors.
 //
 export 'package:bytes_buffer/src/bytes_buffer.dart';
+export 'package:bytes_buffer/src/bytes_buffer_base.dart';
 export 'package:bytes_buffer/src/read_buffer.dart';
 export 'package:bytes_buffer/src/read_buffer_mixin.dart';
 export 'package:bytes_buffer/src/write_buffer.dart';

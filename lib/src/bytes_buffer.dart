@@ -57,11 +57,7 @@ class BytesBuffer extends BytesBufferBase
         wIndex = length ?? td.lengthInBytes;
 
 
-  /// Returns _true_ if _this_ has [n] readable bytes.
-  bool rHasRemaining(int n) => (readIndex + n) <= writeIndex;
 
-  /// Returns _true_ if _this_ has [n] writable bytes.
-  bool wHasRemaining(int n) => (writeIndex + n) <= length;
 
 
 

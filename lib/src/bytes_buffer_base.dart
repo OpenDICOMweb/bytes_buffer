@@ -36,11 +36,17 @@ abstract class BytesBufferBase {
   /// Returns _true_ if there are bytes that can be read.
   bool get isReadable => wIndex > 0;
 
-  /// Returns the number of readable bytes in _this_.
+  /// Returns _true_ if _this_ has [n] readable bytes.
+  bool rHasRemaining(int n) => (readIndex + n) <= writeIndex;
+
   int get readRemaining => wIndex - rIndex;
 
   /// Returns _true_ if there are bytes that can be written.
   bool get isWritable => writeRemaining > 0;
+
+  /// Returns _true_ if _this_ has [n] writable bytes.
+  bool wHasRemaining(int n) => (writeIndex + n) <= length;
+  /// Returns the number of readable bytes in _this_.
 
   /// Returns the number of writable bytes in _this_.
   int get writeRemaining => bytes.length - wIndex;

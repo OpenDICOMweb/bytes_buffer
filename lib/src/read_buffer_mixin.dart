@@ -188,11 +188,12 @@ mixin ReadBufferMixin {
     return v;
   }
 
-  String getString(int length) =>
-      bytes.getString(offset: rIndex, length: length);
+  // Urgent decide what the default value of allowInvalid should be.
+  String getString(int length, {bool allowInvalid = false}) => bytes.getString(
+      offset: rIndex, length: length, allowInvalid: allowInvalid);
 
-  String readString(int length) {
-    final s = getString(length);
+  String readString(int length, {bool allowInvalid = false}) {
+    final s = getString(length, allowInvalid: allowInvalid);
     rIndex += length;
     return s;
   }
@@ -204,9 +205,9 @@ mixin ReadBufferMixin {
     return v;
   }
 
-  List<String> readStringList(int length) {
-    final s =
-        bytes.getString(offset: rIndex, length: length, allowInvalid: true);
+  List<String> readStringList(int length, {bool allowInvalid = false}) {
+    final s = bytes.getString(
+        offset: rIndex, length: length, allowInvalid: allowInvalid);
     final v = s.split('\\');
     rIndex += length;
     return v;

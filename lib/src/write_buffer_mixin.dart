@@ -11,7 +11,6 @@ import 'dart:typed_data';
 
 import 'package:bytes/bytes.dart';
 
-
 /// A mixin with methods for writing to a Bytes buffer.
 mixin WriteBufferMixin {
   /// The underlying [Bytes] for _this_.
@@ -218,13 +217,7 @@ mixin WriteBufferMixin {
   // **** String writing methods
 
   /// Writes a UTF-8 encoding of [s] into _this_ at current [wIndex].
-  void writeString(String s, [int offset = 0, int length]) {
-    length ??= s.length;
-    final x = (offset == 0 && length == s.length)
-        ? s
-        : s.substring(offset, offset + length);
-    return writeUint8List(cvt.utf8.encode(x));
-  }
+  void writeString(String s) => writeUint8List(cvt.utf8.encode(s));
 
   /// Writes [length] zeros to _this_.
   bool writeZeros(int length) {

@@ -9,109 +9,61 @@
 import 'dart:typed_data';
 
 import 'package:bytes/bytes.dart';
+import 'package:bytes_buffer/bytes_buffer.dart';
+import 'package:bytes_buffer/src/bytes_buffer_base.dart';
+import 'package:bytes_buffer/src/read_buffer_mixin.dart';
+import 'package:bytes_buffer/src/write_buffer_mixin.dart';
 
 /// The base class for Buffer
-abstract class BytesBuffer {
-  /// The underlying [Bytes] for the buffer.
-  Bytes get bytes;
-  set bytes(Bytes bytes) => throw UnsupportedError('Unsupported Setter');
+class BytesBuffer extends BytesBufferBase
+    with ReadBufferMixin, WriteBufferMixin {
+  @override
+  Bytes bytes;
+  @override
+  int rIndex;
+  @override
+  int wIndex;
 
-  /// The read index into _this_.
-  int get rIndex;
-  set rIndex(int n);
+  /// Creates a [BytesBuffer] of [length] starting at [offset] in [bytes].
+  BytesBuffer(this.bytes, [int offset = 0, int length])
+      : rIndex = offset ?? 0,
+        wIndex = length ?? bytes.length;
 
-  /// The read index into _this_.
-  int get wIndex;
-  set wIndex(int n);
+  /// Creates a [BytesBuffer] from another [BytesBuffer].
+  BytesBuffer.from(BytesBuffer rb,
+      [int offset = 0, int length, Endian endian = Endian.little])
+      : bytes = Bytes.from(rb.bytes, offset, length, endian),
+        rIndex = offset ?? rb.bytes.offset,
+        wIndex = length ?? rb.bytes.length;
 
-  /// The offset of _this_ in the underlying [ByteBuffer].
-  int get offset => bytes.offset;
+  /// Creates a [BytesBuffer] from a [ByteData].
+  BytesBuffer.fromByteData(ByteData td,
+      [int offset, int length, Endian endian = Endian.little])
+      : bytes = Bytes.typedDataView(td, offset, length, endian),
+        rIndex = offset ?? td.offsetInBytes,
+        wIndex = length ?? td.lengthInBytes;
 
-  /// The start of _this_ in the underlying [ByteBuffer].
-  int get start => bytes.offset;
+  /// Creates a [BytesBuffer] from an [List<int>].
+  BytesBuffer.fromList(List<int> list, [Endian endian = Endian.little])
+      : bytes = Bytes.fromList(list, endian ?? Endian.little),
+        rIndex = 0,
+        wIndex = list.length;
 
-  /// The length of the [bytes].
-  int get length => bytes.length;
+  /// Creates a [BytesBuffer] from a view of [td].
+  BytesBuffer.typedDataView(TypedData td,
+      [int offset = 0, int length, Endian endian = Endian.little])
+      : bytes = Bytes.typedDataView(td, offset, length, endian),
+        rIndex = offset ?? td.offsetInBytes,
+        wIndex = length ?? td.lengthInBytes;
 
-  /// The index of the _end_ of _this_. _Note_: [end] is not a legal index.
-  int get end => start + bytes.length;
-
-  /// The read index into the underlying bytes.
-  int get readIndex => rIndex;
-
-
-  /// The write index into the underlying bytes.
-  int get writeIndex => rIndex;
-
-  /// Returns _true_ if the _this_ is not readable.
-  bool get isNotReadable => !isReadable;
-
-  /// Returns _true_ if the _this_ is not writable.
-  bool get isNotWritable => !isWritable;
-
-  // ****  External Getters
-
-  /// The maximum [length] of _this_.
-  int get limit => bytes.length;
-
-  /// The endianness of _this_.
-  Endian get endian => bytes.endian;
-
-  /// The number of readable bytes in [bytes].
-  int get readRemaining;
-
-  /// Returns _true_ if [readRemaining] >= 0.
-  bool get isReadable;
-
-  /// The current number of writable bytes in [bytes].
-  int get writeRemaining;
-
-  /// Returns _true_ if [writeRemaining] >= 0.
-  bool get isWritable;
-
-  /// The maximum number of writable bytes in [bytes].
-  int get writeRemainingMax;
-
-  // ****  End of External Getters
 
   /// Returns _true_ if _this_ has [n] readable bytes.
   bool rHasRemaining(int n) => (readIndex + n) <= writeIndex;
 
   /// Returns _true_ if _this_ has [n] writable bytes.
-  bool wHasRemaining(int n) => (writeIndex + n) <= end;
+  bool wHasRemaining(int n) => (writeIndex + n) <= length;
 
-  /// Returns a _view_ of [bytes] containing the bytes from [start] inclusive
-  /// to [end] exclusive. If [end] is omitted, the [length] of _this_ is used.
-  /// An error occurs if [start] is outside the range 0 .. [length],
-  /// or if [end] is outside the range [start] .. [length].
-  /// [length].
-  Bytes sublist([int start = 0, int end]) =>
-      Bytes.from(bytes, start, (end ?? length) - start);
 
-  /// Return a view of _this_ of [length], starting at [start]. If [length]
-  /// is _null_ it defaults to [length].
-  Bytes view([int start = 0, int length]) =>
-      bytes.asBytes(start, length ?? length);
 
-  /// Return a [ByteData] view of _this_ of [length], starting at [start].
-  /// If [length] is _null_ it defaults to [length].
-  ByteData asByteData([int start, int length]) =>
-      bytes.asByteData(start ?? readIndex, length ?? writeIndex);
 
-  /// Return a [Uint8List] view of _this_ of [length], starting at [start].
-  /// If [length] is _null_ it defaults to [length].
-  Uint8List asUint8List([int start, int length]) =>
-      bytes.asUint8List(start ?? readIndex, length ?? writeIndex);
-
-  /// Prints a warning message when reading.
-  void rWarn(Object msg) => print('** Warning: $msg @$readIndex');
-
-  /// Prints a Error message when reading.
-  void rError(Object msg) => throw Exception('**** Error: $msg @$writeIndex');
-
-  /// Prints a warning message when writing.
-  void wWarn(Object msg) => print('** Warning: $msg @$readIndex');
-
-  /// Prints a Error message when writing.
-  void wError(Object msg) => throw Exception('**** Error: $msg @$writeIndex');
 }

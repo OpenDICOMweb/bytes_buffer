@@ -9,53 +9,46 @@
 import 'dart:typed_data';
 
 import 'package:bytes/bytes.dart';
+import 'package:bytes_buffer/src/bytes_buffer_base.dart';
 import 'package:bytes_buffer/src/write_buffer_mixin.dart';
 
 /// A writable [ByteBuffer].
-class WriteBuffer with WriteBufferMixin {
+class WriteBuffer extends BytesBufferBase with WriteBufferMixin {
   @override
   Bytes bytes;
   @override
   final int rIndex;
-  int _wIndex;
+  @override
+  int wIndex;
+
+  /// Creates a new WriteBuffer from [bytes].
+  WriteBuffer(this.bytes)
+      : rIndex = 0,
+        wIndex = 0;
 
   /// Creates an empty WriteBuffer.
-  WriteBuffer([int length = kDefaultLength, Endian endian = Endian.little])
+  WriteBuffer.empty(
+      [int length = kDefaultLength, Endian endian = Endian.little])
       : rIndex = 0,
-        _wIndex = 0,
+        wIndex = 0,
         bytes = Bytes.empty(length, endian);
 
   /// Creates a [WriteBuffer] from another [WriteBuffer].
   WriteBuffer.from(WriteBuffer wb,
       [this.rIndex = 0, int length, Endian endian = Endian.little])
-      : _wIndex = rIndex,
+      : wIndex = rIndex,
         bytes = Bytes.from(wb.bytes, rIndex, length, endian);
 
   /// Creates a WriteBuffer from a [Bytes].
-  WriteBuffer.fromBytes(this.bytes, this.rIndex, this._wIndex);
+  WriteBuffer.fromBytes(this.bytes, this.rIndex, this.wIndex);
 
   /// Creates a [WriteBuffer] that uses a [TypedData] view of [td].
   WriteBuffer.typedDataView(TypedData td,
       [this.rIndex = 0, int lengthInBytes, Endian endian = Endian.little])
-      : _wIndex = lengthInBytes ?? td.lengthInBytes,
+      : wIndex = lengthInBytes ?? td.lengthInBytes,
         bytes = Bytes.typedDataView(td, rIndex,
             lengthInBytes ?? td.lengthInBytes, endian ?? Endian.little);
 
-  /// Returns the current write index.
-  @override
-  int get wIndex => _wIndex;
-  @override
-  set wIndex(int n) {
-    if (wIndex < rIndex || wIndex >= bytes.length)
-      throw RangeError.range(wIndex, rIndex, bytes.length);
-    _wIndex = n;
-  }
-
-  /// Returns the Endianness of _this_.
-  Endian get endian => bytes.endian;
-
-  /// Return a view of _this_ of [length], starting at [start]. If [length]
-  /// is _null_ it defaults to [length].
-  Bytes view([int start = 0, int length]) =>
-      bytes.asBytes(start, length ?? length);
+  /// Unsupported.
+  set rIndex(int i) => throw UnsupportedError('Not readable.');
 }

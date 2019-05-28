@@ -8,33 +8,13 @@
 import 'dart:typed_data';
 
 import 'package:bytes/bytes.dart';
-import 'package:bytes_buffer/src/bytes_buffer.dart';
+import 'package:bytes_buffer/src/bytes_buffer_base.dart';
 import 'package:bytes_buffer/src/read_buffer_mixin.dart';
 
-/// The base class for readable [BytesBuffer]s.
-abstract class ReadBufferBase extends BytesBuffer {
-  /// The [Bytes] that _this_ reads from.
-  @override
-  Bytes get bytes;
 
-  /// The current read index.
-  @override
-  int get rIndex;
+/// A read only BytesBuffer.
 
-  /// The current write index.
-  @override
-  int get wIndex;
-
-  // **** ReadBuffer specific Getters and Methods
-
-  @override
-  set bytes(Bytes bytes) => throw UnsupportedError('Unsupported Setter');
-}
-
-/// A read only buffer.
-///
-///
-class ReadBuffer extends ReadBufferBase with ReadBufferMixin {
+class ReadBuffer extends BytesBufferBase with ReadBufferMixin {
   @override
   final Bytes bytes;
   @override

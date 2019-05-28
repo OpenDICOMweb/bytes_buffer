@@ -13,22 +13,22 @@ void main() {
     test('Buffer Growing Test', () {
       const startSize = 1;
       const iterations = 1024 * 1;
-      final wb = WriteBuffer(startSize);
+      final wb = WriteBuffer.empty(startSize);
       print('''
 iterations: $iterations
-  index: ${wb.writeIndex}
+  index: ${wb.wIndex}
   length: ${wb.length}
 ''');
 
-      expect(wb.readIndex == 0, true);
-      expect(wb.writeIndex == 0, true);
+      expect(wb.rIndex == 0, true);
+      expect(wb.wIndex == 0, true);
       expect(wb.length == startSize, true);
       for (var i = 0; i <= iterations - 1; i++) {
         final v = i % 127;
         wb.writeInt8(v);
       }
-      print('wb: $wb}\n  length: ${wb.writeIndex}');
-      expect(wb.writeIndex == iterations, true);
+      print('wb: $wb}\n  length: ${wb.wIndex}');
+      expect(wb.wIndex == iterations, true);
     });
   });
 }

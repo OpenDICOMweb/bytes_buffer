@@ -9,7 +9,9 @@
 
 1. look at making rIndex/wIndex private
 1. verify initialization of rIndex/wIndex
-1. Complete write test
+1. Add write tests to all test files
+1. Add string test
+1. Add Byte and ByteData tests
 1. Remove all ignore_for_file
 4. Document all public methods,...
 1. Add WriteBuffer test to all tests

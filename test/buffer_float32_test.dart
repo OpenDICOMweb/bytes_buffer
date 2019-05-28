@@ -15,6 +15,26 @@ void main() {
   final rng = RNG();
 
   group('Bytes Float32 Tests', () {
+    test('Float32 ReadBuffer', () {
+      final bytes = Bytes.empty();
+      final wBuf = WriteBuffer(bytes);
+      expect(wBuf.bytes == bytes, true);
+      expect(wBuf.length == bytes.length, true);
+      expect(wBuf.rIndex == 0, true);
+      expect(wBuf.wIndex == 0, true);
+
+      var offset = 0;
+      for (var i = 1; i < 10; i++) {
+        final index = wBuf.wIndex;
+        expect(index == offset, true);
+        final x = rng.nextFloat32;
+        wBuf.writeFloat32(x);
+        offset += 4;
+        final y = bytes.getFloat32(index);
+        expect(x == y, true);
+      }
+    });
+
     test('ReadBuffer', () {
       for (var i = 1; i < 10; i++) {
         final vList1 = rng.float32List(1, i);
@@ -29,7 +49,29 @@ void main() {
             true);
         expect(rBuf.rIndex == 0, true);
         expect(rBuf.wIndex == bytes1.length, true);
+
+        final vList2 = rBuf.readFloat32List(vList1.length);
+        expect(vList2, equals(vList1));
+        expect(vList2 != vList1, true);
       }
+    });
+
+    test('Float32 Buffer Growing Test', () {
+      const startSize = 1;
+      const iterations = 1024 * 1;
+      final wb0 = WriteBuffer.empty(startSize);
+      expect(wb0.rIndex == 0, true);
+      expect(wb0.wIndex == 0, true);
+      expect(wb0.length == startSize, true);
+
+      var offset = 0;
+      for (var i = 0; i <= iterations - 1; i++) {
+        final v = rng.nextFloat32;
+        wb0.writeFloat32(v);
+        offset += 4;
+        expect(wb0.wIndex == offset, true);
+      }
+      expect(wb0.wIndex == iterations * 4, true);
     });
   });
 }

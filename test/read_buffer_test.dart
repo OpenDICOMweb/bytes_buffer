@@ -77,27 +77,28 @@ void main() {
 
     test('ReadBuffer readString', () {
       for (var i = 1; i < 10; i++) {
-        final vList = rng.asciiString(i);
-        final bytes = Bytes.fromList(vList);
+        final s0 = rng.asciiString(i);
+        final bytes = Bytes.fromList(s0.codeUnits);
         final rb = ReadBuffer(bytes);
         print('rb: $rb');
 
-        final readAscii0 = rb.readString(vList.length);
+        final readAscii0 = rb.readString(s0.length);
         print('readAscii: $readAscii0');
-        expect(readAscii0 == cvt.ascii.decode(vList), true);
+        final s1 = cvt.ascii.decode(bytes.buf, allowInvalid: true);
+        expect(readAscii0 == s1, true);
       }
     });
 
     test('ReadBuffer readString', () {
       for (var i = 1; i < 10; i++) {
-        final vList = rng.asciiString(i);
-        final bytes = Bytes.fromList(vList);
+        final s0 = rng.asciiString(i);
+        final bytes = Bytes.fromString(s0);
         final rb = ReadBuffer(bytes);
         print('rb: $rb');
 
-        final readString0 = rb.readString(vList.length);
+        final readString0 = rb.readString(s0.length);
         print('readString: $readString0');
-        expect(readString0 == cvt.utf8.decode(vList), true);
+        expect(readString0 == cvt.utf8.decode(bytes), true);
       }
     });
 

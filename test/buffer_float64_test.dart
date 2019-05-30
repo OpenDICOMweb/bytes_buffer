@@ -6,76 +6,124 @@
 //  Primary Author: Jim Philbin <jfphilbin@gmail.edu>
 //  See the AUTHORS file for other contributors.
 //
-import 'package:bytes/bytes.dart';
-import 'package:bytes_buffer/bytes_buffer.dart';
+import 'dart:typed_data';
+
+import 'package:bytes_buffer/debug/test_utils.dart';
 import 'package:rng/rng.dart';
 import 'package:test/test.dart';
+import 'package:test_tools/tools.dart';
 
 void main() {
   final rng = RNG();
-  group('Bytes Float64 Tests', () {
-    test('Float64 ReadBuffer', () {
-      final bytes = Bytes.empty();
-      final wBuf = WriteBuffer(bytes);
-      expect(wBuf.bytes == bytes, true);
-      expect(wBuf.length == bytes.length, true);
-      expect(wBuf.rIndex == 0, true);
-      expect(wBuf.wIndex == 0, true);
+  const repetitions = 100;
+  const min = 0;
+  const max = 100;
 
-      var offset = 0;
-      for (var i = 1; i < 10; i++) {
-        final index = wBuf.wIndex;
-        expect(index == offset, true);
-        final x = rng.nextFloat64;
-        wBuf.writeFloat64(x);
-        offset += 8;
-        final y = bytes.getFloat64(index);
-        expect(x == y, true);
+  group('ReadBuffer Float64 Tests', () {
+    test('ReadBuffer LE Float64 test', () {
+      for (var i = 0; i < repetitions; i++) {
+        final vList0 = rng.float64List(min, max);
+        expect(vList0 is Float64List, true);
+        final rBuf = getReadBufferLE(getFloat64LE(vList0));
+        final out = Float64List(vList0.length);
+
+        for (var j = 0; j < vList0.length; j++) {
+          final v = rBuf.readFloat64();
+          expect(v, equals(vList0[j]));
+          out[j] = v;
+        }
+        expect(out, equals(vList0));
+        expect(rBuf.buffer == out.buffer, false);
       }
     });
 
-    test('ReadBuffer', () {
-      for (var i = 1; i < 10; i++) {
-        final vList1 = rng.float64List(1, i);
-        final bytes1 = Bytes.typedDataView(vList1);
-        final rBuf = ReadBuffer(bytes1);
-
-        expect(rBuf.bytes.buf.buffer == bytes1.buffer, true);
-        expect(rBuf.bytes == bytes1, true);
-        expect(rBuf.length == bytes1.length, true);
-        expect(
-            rBuf.bytes.buf.buffer.lengthInBytes == bytes1.buffer.lengthInBytes,
-            true);
-        expect(rBuf.rIndex == 0, true);
-        expect(rBuf.wIndex == bytes1.length, true);
-
-        final vList2 = rBuf.readFloat64List(vList1.length);
-        expect(vList2, equals(vList1));
-        expect(vList2 != vList1, true);
+    test('ReadBuffer LE Float64List test', () {
+      final vList0 = rng.float64List(min, max);
+      for (var i = 0; i < repetitions; i++) {
+        final rBuf = getReadBufferLE(getFloat64LE(vList0));
+        final vList1 = rBuf.readFloat64List(vList0.length);
+        expect(vList1, equals(vList0));
       }
     });
 
-    test('Float64 Empty Buffer Growing Test', () {
-      const startSize = 1;
-      const iterations = 1024 * 1;
-      final wb0 = WriteBuffer.empty(startSize);
-      expect(wb0.rIndex == 0, true);
-      expect(wb0.wIndex == 0, true);
-      expect(wb0.length == startSize, true);
+    test('ReadBuffer BE Float64 tests', () {
+      for (var i = 0; i < repetitions; i++) {
+        final vList0 = rng.float64List(min, max);
+        expect(vList0 is Float64List, true);
+        final rBuf = getReadBufferBE(getFloat64BE(vList0));
+        final out = Float64List(vList0.length);
 
-      var offset = 0;
-      for (var i = 0; i <= iterations - 1; i++) {
-        final v = rng.nextFloat64;
-        wb0.writeFloat64(v);
-        print('${wb0.wIndex}: v $v');
-        final x = wb0.bytes.getFloat64(offset);
-        offset += 8;
-        print('$offset: x $x');
-        expect(v == x, true);
-        expect(offset == wb0.wIndex, true);
+        for (var j = 0; j < vList0.length; j++) {
+          final v = rBuf.readFloat64();
+          expect(v, equals(vList0[j]));
+          out[j] = v;
+        }
+        expect(out, equals(vList0));
+        expect(rBuf.buffer == out.buffer, false);
       }
-      expect(wb0.wIndex == iterations * 8, true);
+    });
 
+    test('ReadBuffer BE Float64List test', () {
+      for (var i = 0; i < repetitions; i++) {
+        final vList0 = rng.float64List(min, max);
+        final rBuf = getReadBufferBE(getFloat64BE(vList0));
+        final vList1 = rBuf.readFloat64List(vList0.length);
+        expect(vList1, equals(vList0));
+      }
+    });
+  });
+
+  group('WriteBuffer Float64 Tests', () {
+    test('WriteBuffer Float64 LE tests', () {
+      for (var i = 0; i < repetitions; i++) {
+        final vList0 = rng.float64List(min, max);
+        var size = vList0.lengthInBytes;
+        size = size == 0 ? 1 : size;
+        final rBuf0 = getWriteBuffer(vList0.length * 8, 'LE');
+        final out = Float64List(vList0.length);
+
+        final bytes = rBuf0.bytes;
+        var offset = 0;
+        for (var j = 0; j < vList0.length; j++) {
+          final x = vList0[j];
+          rBuf0.writeFloat64(x);
+          out[j] = x;
+          expect(bytes.getFloat64(j * 8) == x, true);
+          offset += 8;
+          expect(rBuf0.wIndex == offset, true);
+        }
+        expect(out, equals(vList0));
+
+        final rBuf1 = getWriteBuffer(size, 'LE')..writeFloat64List(vList0);
+        final vList1 = rBuf1.bytes.getFloat64List(0, vList0.length);
+        expect(vList1, equals(vList0));
+      }
+    });
+
+    test('WriteBuffer Float64 BE  tests', () {
+      for (var i = 0; i < repetitions; i++) {
+        final vList0 = rng.float64List(min, max);
+        var size = vList0.lengthInBytes;
+        size = size == 0 ? 1 : size;
+        final rBuf0 = getWriteBuffer(size, 'BE');
+        final out = Float64List(vList0.length);
+
+        final bytes = rBuf0.bytes;
+        var offset = 0;
+        for (var j = 0; j < vList0.length; j++) {
+          final x = vList0[j];
+          rBuf0.writeFloat64(x);
+          out[j] = x;
+          expect(bytes.getFloat64(j * 8) == x, true);
+          offset += 8;
+          expect(rBuf0.wIndex == offset, true);
+        }
+        expect(out, equals(vList0));
+
+        final rBuf1 = getWriteBuffer(size, 'BE')..writeFloat64List(vList0);
+        final vList1 = rBuf1.bytes.getFloat64List(0, vList0.length);
+        expect(vList1, equals(vList0));
+      }
     });
   });
 }

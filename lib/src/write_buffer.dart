@@ -44,10 +44,10 @@ class WriteBuffer extends BytesBufferBase with WriteBufferMixin {
 
   /// Creates a [WriteBuffer] that uses a [TypedData] view of [td].
   WriteBuffer.typedDataView(TypedData td,
-      [this.rIndex = 0, int lengthInBytes, Endian endian = Endian.little])
-      : wIndex = lengthInBytes ?? td.lengthInBytes,
-        bytes = Bytes.typedDataView(td, rIndex,
-            lengthInBytes ?? td.lengthInBytes, endian ?? Endian.little);
+      [this.rIndex = 0, int length, Endian endian = Endian.little])
+      : wIndex = length ?? td.lengthInBytes,
+        bytes = Bytes.typedDataView(
+            td, rIndex, length ?? td.lengthInBytes, endian);
 
   /// Unsupported.
   set rIndex(int i) => throw UnsupportedError('Not readable.');

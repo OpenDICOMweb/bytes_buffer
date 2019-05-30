@@ -36,14 +36,14 @@ class ReadBuffer extends BytesBufferBase with ReadBufferMixin {
 
   /// Creates a [ReadBuffer] from a [ByteData].
   ReadBuffer.fromByteData(ByteData td,
-      [int offset, int length, Endian endian = Endian.little])
+      [int offset = 0, int length, Endian endian = Endian.little])
       : bytes = Bytes.typedDataView(td, offset, length, endian),
         rIndex = offset ?? td.offsetInBytes,
         wIndex = length ?? td.lengthInBytes;
 
   /// Creates a [ReadBuffer] from an [List<int>].
   ReadBuffer.fromList(List<int> list, [Endian endian = Endian.little])
-      : bytes = Bytes.fromList(list, endian ?? Endian.little),
+      : bytes = Bytes.fromList(list, endian),
         rIndex = 0,
         wIndex = list.length;
 

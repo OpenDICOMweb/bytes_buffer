@@ -37,15 +37,16 @@ abstract class BytesBufferBase {
   bool get isReadable => wIndex > 0;
 
   /// Returns _true_ if _this_ has [n] readable bytes.
-  bool rHasRemaining(int n) => (readIndex + n) <= writeIndex;
+  bool rHasRemaining(int n) => (rIndex + n) <= wIndex;
 
+  /// Returns the number of readable bytes in _this_.
   int get readRemaining => wIndex - rIndex;
 
   /// Returns _true_ if there are bytes that can be written.
   bool get isWritable => writeRemaining > 0;
 
   /// Returns _true_ if _this_ has [n] writable bytes.
-  bool wHasRemaining(int n) => (writeIndex + n) <= length;
+  bool wHasRemaining(int n) => (wIndex + n) <= length;
   /// Returns the number of readable bytes in _this_.
 
   /// Returns the number of writable bytes in _this_.
@@ -64,7 +65,7 @@ abstract class BytesBufferBase {
   int get readIndex => rIndex;
 
   /// The write index into the underlying bytes.
-  int get writeIndex => rIndex;
+  int get writeIndex => wIndex;
 
   /// Returns _true_ if the _this_ is not readable.
   bool get isNotReadable => !isReadable;
@@ -105,17 +106,17 @@ abstract class BytesBufferBase {
   /// Return a [ByteData] view of _this_ of [length], starting at [start].
   /// If [length] is _null_ it defaults to [length].
   ByteData asByteData([int start, int length]) =>
-      bytes.asByteData(start ?? readIndex, length ?? writeIndex);
+      bytes.asByteData(start ?? rIndex, length ?? wIndex);
 
   /// Prints a warning message when reading.
-  void rWarn(Object msg) => print('** Warning: $msg @$readIndex');
+  void rWarn(Object msg) => print('** Warning: $msg @$rIndex');
 
   /// Prints a Error message when reading.
-  void rError(Object msg) => throw Exception('**** Error: $msg @$writeIndex');
+  void rError(Object msg) => throw Exception('**** Error: $msg @$wIndex');
 
   /// Prints a warning message when writing.
-  void wWarn(Object msg) => print('** Warning: $msg @$readIndex');
+  void wWarn(Object msg) => print('** Warning: $msg @$rIndex');
 
   /// Prints a Error message when writing.
-  void wError(Object msg) => throw Exception('**** Error: $msg @$writeIndex');
+  void wError(Object msg) => throw Exception('**** Error: $msg @$wIndex');
 }
